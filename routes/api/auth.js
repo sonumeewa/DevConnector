@@ -35,8 +35,8 @@ router.post(
     }
     const { email, password } = req.body;
     try {
-      let user = await User.findOne({ email });
-      if (user) {
+      let user = await User.findOne({ email: email });
+      if (!user) {
         return res
           .status(400)
           .json({ errors: [{ msg: 'User Does not  exists ' }] });
@@ -54,7 +54,7 @@ router.post(
       jwt.sign(
         payload,
         config.get('jwtSecret'),
-        { expiresIn: 360000 },
+        { expiresIn: 360000000 },
         (err, token) => {
           if (err) throw err;
           res.json({ token });
