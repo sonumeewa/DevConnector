@@ -15,7 +15,11 @@ export const Login = ({ login, isAuthenticated }) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    login({ email, password });
+    try {
+      login({ email, password });
+    } catch (err) {
+      console.error(err.message);
+    }
   };
 
   // redirect if logged in
