@@ -11,7 +11,7 @@ import {
 import { setAlert } from './alert';
 import { setAuthToken } from '../utils/setAuthToken';
 
-export const logout = (dispatch) => {
+export const logout = () => async (dispatch) => {
   dispatch({ type: LOGOUT });
 };
 export const loadUser = () => async (dispatch) => {
