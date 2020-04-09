@@ -203,7 +203,7 @@ router.put(
       const profile = await Profile.findOne({ user: req.user.id });
       profile.experience.unshift(newExp);
       await profile.save();
-      res.json({ msg: 'Experience added' });
+      res.json(profile);
     } catch (error) {
       console.error(error.message);
       res.status(500).send('Server Error');
@@ -222,7 +222,7 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
       .indexOf(req.params.exp_id);
     profile.experience.splice(removeIndex, 1);
     await profile.save();
-    res.json({ msg: 'Experience deleted' });
+    res.json(profile);
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Server Error');
@@ -273,7 +273,7 @@ router.put(
       const profile = await Profile.findOne({ user: req.user.id });
       profile.education.unshift(newEdu);
       await profile.save();
-      res.json({ msg: 'Education added' });
+      res.json(profile);
     } catch (error) {
       console.error(error.message);
       res.status(500).send('Server Error');
@@ -292,7 +292,7 @@ router.delete('/education/:edu_id', auth, async (req, res) => {
       .indexOf(req.params.edu_id);
     profile.education.splice(removeIndex, 1);
     await profile.save();
-    res.json({ msg: 'Education deleted' });
+    res.json(profile);
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Server Error');

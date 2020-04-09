@@ -36,7 +36,7 @@ const AddExperience = ({ addExperience, history }) => {
         className='form'
         onSubmit={(e) => {
           e.preventDefault();
-          addExperience(formData, history);
+          addExperience(formData, history, true);
         }}
       >
         <div className='form-group'>

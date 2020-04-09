@@ -44,7 +44,7 @@ const AddEducation = ({ addEducation, history }) => {
         className='form'
         onSubmit={(e) => {
           e.preventDefault();
-          addEducation(formData, history);
+          addEducation(formData, history, true);
         }}
       >
         <div className='form-group'>
@@ -101,7 +101,7 @@ const AddEducation = ({ addEducation, history }) => {
               }}
             />
             {'  '}
-            Current Job
+            Current course
           </p>
         </div>
         <div className='form-group'>
