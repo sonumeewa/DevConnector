@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../../middleware/auth');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
+const Post = require('../../models/Post');
 const request = require('request');
 const config = require('config');
 const { check, validationResult } = require('express-validator');
@@ -122,10 +123,10 @@ router.get('/', async (req, res) => {
 // @route    GET api/profile/user/:user_id
 // @desc     Get profile by user id
 // @access   Public
-router.get('/:user/:user_id', async (req, res) => {
+router.get('/user/:userId', async (req, res) => {
   try {
     const profile = await Profile.find({
-      user: req.params.user_id,
+      user: req.params.userId,
     }).populate('user', ['name', 'email', 'avatar']);
     if (!profile) return res.status(400).json({ msg: 'Profile not found' });
     res.json(profile);
@@ -143,7 +144,7 @@ router.get('/:user/:user_id', async (req, res) => {
 router.delete('/', auth, async (req, res) => {
   try {
     // @todo - remove users posts
-
+    await Post.deleteMany({ user: req.user.id });
     // Remove Profile
     await Profile.findOneAndRemove({ user: req.user.id });
 
