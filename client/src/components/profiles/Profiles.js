@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import Spinner from '../layout/Spinner';
 import { getProfiles } from '../../actions/profile';
 import ProfileItem from './ProfileItem';
-import ProfileAbout from '../profile/ProfileAbout';
 // import ProfileGithub from '../profile/ProfileGithub';
 const Profiles = ({
   profile: { profiles, loading, githubusername },
@@ -35,7 +34,6 @@ const Profiles = ({
               <h4>No Profiles Found</h4>
             )}
           </div>
-          {/* {githubusername && <ProfileGithub username={githubusername} />} */}
         </Fragment>
       )}
     </Fragment>
