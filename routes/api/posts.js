@@ -11,14 +11,7 @@ const Profile = require('../../models/Profile');
 // @access   Private
 router.post(
   '/',
-  [
-    auth,
-    [
-      check('text', 'Text is required')
-        .not()
-        .isEmpty()
-    ]
-  ],
+  [auth, [check('text', 'Text is required').not().isEmpty()]],
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -30,7 +23,7 @@ router.post(
         text: req.body.text,
         name: user.name,
         avatar: user.avatar,
-        user: req.user.id
+        user: req.user.id,
       });
 
       const post = await newPost.save();
@@ -60,7 +53,7 @@ router.get('/', auth, async (req, res) => {
 // @access   Private
 router.get('/:id', auth, async (req, res) => {
   try {
-    const post = await Post.find({ _id: req.params.id });
+    const post = await Post.findOne({ _id: req.params.id });
     if (!post) return res.status(400).json({ msg: 'No post found' });
     res.json(post);
   } catch (error) {
@@ -78,7 +71,7 @@ router.get('/:id', auth, async (req, res) => {
 router.delete('/:id', auth, async (req, res) => {
   try {
     //check on user
-    const post = Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id);
 
     if (!post) return res.status(400).json({ msg: 'No post found' });
     if (post.user.toString() !== req.user.id) {
@@ -105,7 +98,8 @@ router.put('/like/:id', auth, async (req, res) => {
 
     //check on user
     if (
-      post.likes.filter(like => like.user.toString() === req.user.id).length > 0
+      post.likes.filter((like) => like.user.toString() === req.user.id).length >
+      0
     ) {
       return res.status(400).json({ msg: 'Already Liked' });
     }
@@ -131,15 +125,15 @@ router.put('/unlike/:id', auth, async (req, res) => {
 
     //check on user
     if (
-      post.likes.filter(like => like.user.toString() === req.user.id).length ===
-      0
+      post.likes.filter((like) => like.user.toString() === req.user.id)
+        .length === 0
     ) {
       return res.status(400).json({ msg: 'Post has not yet been Liked' });
     }
 
     //Get remove Index
     const removeIndex = post.likes
-      .map(like => like.user.toString())
+      .map((like) => like.user.toString())
       .indexOf(req.user.id);
 
     post.likes.splice(removeIndex, 1);
@@ -159,14 +153,7 @@ router.put('/unlike/:id', auth, async (req, res) => {
 // @access   Private
 router.post(
   '/comment/:id',
-  [
-    auth,
-    [
-      check('text', 'Text is required')
-        .not()
-        .isEmpty()
-    ]
-  ],
+  [auth, [check('text', 'Text is required').not().isEmpty()]],
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -179,9 +166,10 @@ router.post(
         text: req.body.text,
         name: user.name,
         avatar: user.avatar,
-        user: req.user.id
+        user: req.user.id,
       };
       post.comments.unshift(newComment);
+      await post.save();
       res.json(post.comments);
     } catch (error) {
       console.error(error.message);
@@ -198,7 +186,7 @@ router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
     const user = await User.findOne({ _id: req.user.id }).select('-password');
     const post = await Post.findById(req.params.id);
     const comment = post.comments.find(
-      comment => comment.id === req.params.comment_id
+      (comment) => comment.id === req.params.comment_id
     );
 
     if (!comment) {
@@ -207,13 +195,13 @@ router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
     if (comment.user.toString() !== req.user.id) {
       return res.status(404).json({ msg: 'User not authorized' });
     }
-    const removeIndex = post.comments
-      .map(comment => comment.user.toString())
-      .indexOf(req.user.id);
+    post.comments = post.comments.filter(
+      ({ id }) => id !== req.params.comment_id
+    );
 
-    post.comments.splice(removeIndex, 1);
     await post.save();
-    res.json(post.comments);
+
+    return res.json(post.comments);
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Server Error');
